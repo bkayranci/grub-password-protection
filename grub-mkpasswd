@@ -24,7 +24,7 @@ fn_check_command() {
 set +e
 fn_check_command tee tee
 fn_check_command grub-mkpasswd-pbkdf2 grub-common
-fn_check_command update-grub2 grub-common
+fn_check_command update-grub grub-common
 set -e
 
 ## DECLARE VARIABLES
