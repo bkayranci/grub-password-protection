@@ -1,0 +1,109 @@
+#!/bin/sh -e
+
+set -e
+set -o pipefail
+
+## ROOT USER CONTROL
+if (( $UID != 0 ))
+then
+    echo "You must be root"
+    exit 1
+fi
+
+## DECLARE VARIABLES
+user_config_file=/etc/grub.d/01_users
+
+## CLEAR CONFIG
+fn_clear() {
+    if [ -e $user_config_file ]
+    then
+        echo "$user_config_file will be delete! Do you confirm? [Y|n]"
+        read confirm
+        if [ "$confirm" != 'n' ]
+        then
+            rm $user_config_file
+            echo "$user_config_file is deleted!"
+            grub-mkconfig
+            exit 0
+        else
+            echo "Cancelled!"
+            exit 1
+        fi
+    else
+        echo "$user_config_file is not found!" >&2
+        exit 1
+    fi
+}
+
+fn_set_grub_pass() {
+    raw_temp_file=`mktemp`
+    grub-mkpasswd-pbkdf2 | tee "$raw_temp_file"
+    grub_pass=`cat $raw_temp_file | tail -n 1 | awk '{print $NF}'`
+    rm $raw_temp_file
+}
+
+fn_create_config_file() {
+    tempfile=`mktemp`
+    echo "#!/bin/sh -e" > $tempfile
+    echo "cat << EOF" >> $tempfile
+    echo "    set superusers=$grub_user" >> $tempfile
+    echo "    password_pbkdf2 "$grub_user" "$grub_pass"" >> $tempfile
+    echo "EOF" >> $tempfile
+}
+
+fn_create_passwd() {
+    fn_set_grub_pass
+    fn_create_config_file
+
+    if [ -e $user_config_file ]
+    then
+        echo -e "\n\n$user_config_file will be overwritten!"
+    else
+        echo -e "\n\n$user_config_file will be created!"
+    fi
+    echo "Do you confirm? [Y|n]"
+    read confirm
+
+    if [ "$confirm" != "n" ]
+    then
+        mv $tempfile $user_config_file
+        chmod 755 $user_config_file
+        grub-mkconfig
+    fi
+}
+
+usage() {
+    echo $"Usage: $0"
+    echo -e "-u USERNAME \tCreate config for username"
+    echo -e "-c \t\tClear config file"
+    echo -e "-h \t\tShow help"
+    exit 1
+}
+
+if [ -z $1 ]
+then
+    usage
+fi
+
+while getopts ":u:hc" opt; do
+  case $opt in
+    h)
+      usage
+      ;;
+    u)
+      grub_user=$OPTARG
+      fn_create_passwd
+      ;;
+    c)
+      fn_clear
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
