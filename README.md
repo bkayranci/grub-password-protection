@@ -2,8 +2,8 @@
 
 ## INSTALLATION
 ```
-git clone https://github.com/bkayranci/grub-password-protection.git -o /opt/grub-password-protection
-chmod 500 /opt/grub-password-protection
+sudo git clone https://github.com/bkayranci/grub-password-protection.git /opt/grub-password-protection
+sudo chmod 500 /opt/grub-password-protection
 sudo ln /opt/grub-password-protection /bin/grub-mkpasswd
 ```
 
