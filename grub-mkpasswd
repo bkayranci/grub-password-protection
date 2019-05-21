@@ -46,9 +46,10 @@ fn_create_config_file() {
     tempfile=`mktemp`
     echo "#!/bin/sh -e" > $tempfile
     echo "cat << EOF" >> $tempfile
-    echo "    set superusers=$grub_user" >> $tempfile
+    echo "    set superusers=\"$grub_user\"" >> $tempfile
     echo "    password_pbkdf2 "$grub_user" "$grub_pass"" >> $tempfile
     echo "EOF" >> $tempfile
+    cat $tempfile
 }
 
 fn_create_passwd() {
