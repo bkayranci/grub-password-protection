@@ -4,7 +4,7 @@
 ```
 sudo git clone https://github.com/bkayranci/grub-password-protection.git /opt/grub-password-protection
 sudo chmod 500 /opt/grub-password-protection
-sudo ln /opt/grub-password-protection /bin/grub-mkpasswd
+sudo ln /opt/grub-password-protection/grub-mkpasswd /bin/grub-mkpasswd
 ```
 
 ## REQUIREMENTS
