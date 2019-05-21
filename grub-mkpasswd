@@ -23,7 +23,7 @@ fn_clear() {
         then
             rm $user_config_file
             echo "$user_config_file is deleted!"
-            grub-mkconfig
+            update-grub
             exit 0
         else
             echo "Cancelled!"
@@ -69,7 +69,7 @@ fn_create_passwd() {
     then
         mv $tempfile $user_config_file
         chmod 755 $user_config_file
-        grub-mkconfig
+        update-grub
     fi
 }
 
