@@ -23,3 +23,11 @@ grub-mkpasswd -u root
 ```
 grub-mkpasswd -c
 ```
+
+
+## SCREENSHOT
+
+![Password Screen](/img/screenshot01.png "Password Screen")
+
+![Configuration Screen](/img/screenshot02.png "Configuration Screen")
+
